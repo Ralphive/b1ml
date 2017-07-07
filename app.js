@@ -38,7 +38,7 @@ app.post('/upload', function(req, res){
     form.multiples = true;    
   
     // store all uploads in the /uploads directory
-    form.uploadDir = path.join(__dirname, '/uploads');
+    form.uploadDir = path.join(__dirname, global.newImgDir());
 
     // every time a file has been uploaded successfully,
     // rename it to it's orignal name
@@ -53,7 +53,7 @@ app.post('/upload', function(req, res){
 
     // once all the files have been uploaded, Send them to AWS
     form.on('end', function() {
-        bucket.create(s3, UserName, keyName, AWS.code)
+        bucket.create(s3, UserName)
         res.end('success');
     });
     

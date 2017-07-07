@@ -3,20 +3,41 @@
     on AWS S3
 
 */
+var fs = require('fs')
+var global = require('./global')
+
 
 module.exports = {
     //Creates a bucket and stores a file if its required
-    create :function (s3, bucketName, keyName, Body){
-                s3.createBucket({Bucket: bucketName}, function(err, data) {
+    create :function (s3, keyName){                
+                var files = fs.readdirSync(global.newImgDir());
+                var toBuck= [];
+
+                for(var i in files) {
+                   // if(files[i].indexOf(keyName)){
+                        toBuck.push(files[i])
+                  //  }
+                }
+
+                var bucketName = global.namespace()+'-'+keyName;
+
+                var params = {Bucket: bucketName.toLowerCase()};
+
+                s3.headBucket(params, function(err, data) {
                     if (err){
-                        console.log(err, err.stack); // an error occurred
-                        return;
-                    } 
-                    
-                    if(keyName){
-                        putObject(s3,bucketName, keyName, Body)
+                        //Bucket doesn't exist. So create it
+                        console.log("Bucket "+keyName + "Not found, Trying to create it");
+                        
+                        s3.createBucket(params, function(err, data) {
+                            if (err){
+                                console.log(err, err.stack); // an error occurred
+                                return;
+                            } 
+                            console.log("Bucket "+keyName+"keyName + Successfully created bucket ");
+                            putObjects(s3, params, toBuck);
+                        })  
                     }else{
-                        console.log("Successfully created bucket " + bucketName);
+                        putObjects(s3, params, toBuck);
                     }
                 });
             },
@@ -26,7 +47,6 @@ module.exports = {
                 putObject(s3, bucketName, keyName, Body);
             }
 
-    //exist: function (s3, ) 
 
 }
 
@@ -41,3 +61,16 @@ function putObject(s3,bucketName, keyName, Body){
 
 }
 
+function putObjects(s3, params, toBuck){
+    
+    for(var i in toBuck) {
+        params.Key = toBuck[i];
+        params.Body = 'Content of the file' + toBuck[i];
+        s3.putObject(params, function(err, data) {
+            if (err)
+                console.log(err)
+            else
+                console.log("Successfully uploaded data to " + params.Bucket + "/" + params.Key);
+        });
+    }
+}
