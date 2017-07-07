@@ -1,0 +1,20 @@
+{
+  "name": "mlb1",
+  "version": "1.0.0",
+  "description": "ML test with B1",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "b1",
+    "ml",
+    "leonardo"
+  ],
+  "author": "Ralph Oliveira - @Ralphive",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.3",
+    "formidable": "^1.1.1"
+  }
+}
