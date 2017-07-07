@@ -21,6 +21,8 @@ $('#upload-input').on('change', function(){
       formData.append('uploads[]', file, file.name);
     }
 
+    formData.append('UserName', 'C9998');
+
     $.ajax({
       url: '/upload',
       type: 'POST',
