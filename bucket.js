@@ -33,7 +33,7 @@ module.exports = {
                     }
                 }
 
-                var bucketName = global.namespace()+'-'+keyName;
+                var bucketName = userBucket(keyName);;
 
                 var params = {Bucket: bucketName.toLowerCase()};
 
@@ -60,6 +60,10 @@ module.exports = {
     //Puts file in a given bucket
     put :   function (s3,bucket, keyName, Body){ 
                 putObject(s3, bucket, keyName, Body);
+            }
+
+    userBucket : function (user){
+                return userBucket(user);
             }
 
 
@@ -98,4 +102,8 @@ function putObjects(s3, bucket, keyName, toBuck, fromURL){
             });  
         }
     }
+}
+
+function userBucket(user){
+    return global.namespace()+'-'+user
 }

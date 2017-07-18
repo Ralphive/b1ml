@@ -17,6 +17,8 @@ AWS.config.loadFromPath('./awsConfig.json');
 
 // Create an S3 client (for file management)
 var s3 =  new AWS.S3({apiVersion: '2006-03-01'});
+var rek = new AWS.Rekognition({apiVersion: '2016-06-27'})
+
 
 var bucketName = global.namespace() +'-ralph';
 var keyName = 'hello_world.txt';
@@ -72,20 +74,21 @@ app.post('/upload', function(req, res){
 });
 
 app.post('/uploadURL', function(req, res){
+    //Called by FB Integration
+    // Receives a Json with UserName + Pictures array
+    var jsonInput = {
+                    UserName: 'TestUser',
+                    pics : [
+                        {url : 'https://unsplash.it/1000?random'},
+                        {url : 'https://unsplash.it/1000?random'},
+                        {url : 'https://unsplash.it/1000?random'}
+                    ]    
+                }
 
-        //Called by FB Integration
-        // Receives a Json with UserName + Pictures array
-
-        var jsonInput = {
-                        UserName: 'TestUser',
-                        pics : [
-                            {url : 'https://unsplash.it/1000?random'},
-                            {url : 'https://unsplash.it/1000?random'},
-                            {url : 'https://unsplash.it/1000?random'}
-                        ]    
-                    }
-
-        bucket.create(s3, jsonInput.UserName, jsonInput.pics);
+    bucket.create(s3, jsonInput.UserName, jsonInput.pics, function(){
+        
+        //Call the ML library here
+    });
 
 });
 
