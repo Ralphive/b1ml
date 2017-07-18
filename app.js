@@ -30,6 +30,7 @@ app.get('/', function(req, res){
 
 app.post('/upload', function(req, res){
 
+    //Called from HTML uploader 
     var UserName;
 
     // create an incoming form object
@@ -63,15 +64,31 @@ app.post('/upload', function(req, res){
         }
     });
 
-
     // parse the incoming request containing the form data
     form.parse(req, function(err, fields, files){
-        console.log(files)
+        //console.log(files)  
     });
 
-  
+});
+
+app.post('/uploadURL', function(req, res){
+
+        //Called by FB Integration
+        // Receives a Json with UserName + Pictures array
+
+        var jsonInput = {
+                        UserName: 'TestUser',
+                        pics : [
+                            {url : 'https://unsplash.it/1000?random'},
+                            {url : 'https://unsplash.it/1000?random'},
+                            {url : 'https://unsplash.it/1000?random'}
+                        ]    
+                    }
+
+        bucket.create(s3, jsonInput.UserName, jsonInput.pics);
 
 });
+
 
 var server = app.listen(3000, function(){
   console.log('Server listening on port 3000');
