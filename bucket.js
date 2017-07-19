@@ -5,14 +5,17 @@
 */
 var fs = require('fs')
 var global = require('./global')
+var ml = require('./ml')
 var uuid = require('node-uuid');
 var request = require('request').defaults({ encoding: null });
+var user = '';
 
 
 
 module.exports = {
     //Creates a bucket and stores a file if its required
-    create :function (s3, keyName, files){                
+    //It also sned the files to a Rekognition Collection
+    create :function (s3, user, files, rek){                
                 
                 var toBuck= [];
                 var fromUrl = false;
@@ -22,7 +25,7 @@ module.exports = {
                     files = fs.readdirSync(global.newImgDir());
                     
                     for(var i in files) {
-                        if(files[i].indexOf(keyName)){
+                        if(files[i].indexOf(user)){
                             toBuck.push(global.newImgDir()+files[i])
                         }
                     }
@@ -33,64 +36,54 @@ module.exports = {
                     }
                 }
 
-                var bucketName = userBucket(keyName);;
+                //Bucket example b1ml-C99998-12dj91dj-192jd129dj1-2d1jd
+                var bucket =  global.userNs(user)+"-"+uuid.v4();
+                bucket = bucket.toLowerCase();
 
-                var params = {Bucket: bucketName.toLowerCase()};
+                var params = {Bucket: bucket};
 
-                s3.headBucket(params, function(err, data) {
+                s3.createBucket(params, function(err, data) {
                     if (err){
-                        //Bucket doesn't exist. So create it
-                        console.log("Bucket '"+keyName +"' not found, Trying to create it");
-                        
-                        s3.createBucket(params, function(err, data) {
-                            if (err){
-                                console.log(err, err.stack); // an error occurred
-                                return;
-                            } 
-                            console.log("Bucket '"+keyName+"' successfully created.");
-                            putObjects(s3, params.Bucket, keyName, toBuck,fromUrl);
-
-                        })  
-                    }else{
-                        putObjects(s3, params.Bucket, keyName, toBuck,fromUrl);
-                    }
+                        console.log(err, err.stack); // an error occurred
+                        return;
+                    } 
+                    console.log("Bucket '"+bucket+"' successfully created.");
+                    putObjects(s3, params.Bucket, user, toBuck,fromUrl,rek)
+                            
                 });
-            },
+        },
 
     //Puts file in a given bucket
-    put :   function (s3,bucket, keyName, Body){ 
-                putObject(s3, bucket, keyName, Body);
+    put :   function (s3,bucket, user, Body){ 
+                putObject(s3, bucket, user, Body);
             }
-
-    userBucket : function (user){
-                return userBucket(user);
-            }
-
-
 }
 
-function putObject(s3,bucket, keyName, body){
+function putObject(s3,bucket, user, body,rek){
+    //Upload an object to a given bucket 
+    //Add the object to a Rekognition collection
 
-    var params = {Bucket: bucket, Key: keyName, Body: body};
+    var params = {Bucket: bucket, Key: user+"-"+uuid.v4(), Body: body};
     s3.putObject(params, function(err, data) {
         if (err)
             console.log(err)
         else
-            console.log("Successfully uploaded data to " + bucket + "/" + keyName);
+            console.log("Successfully uploaded data to " + bucket + "/" + user);
+            ml.indexFace(rek,user,bucket,params.Key )
     });
 
 }
 
-function putObjects(s3, bucket, keyName, toBuck, fromURL){
+function putObjects(s3, bucket, user, toBuck, fromURL,rek){
 
-    console.log("Putting files to bucket '"+keyName+"'");
+    console.log("Putting files to bucket '"+user+"'");
 
     if (fromURL){
         //Upload files from a given URL array
         for(var i in toBuck) {       
             request.get(toBuck[i], function (err, res, body) {
                 console.log("Content retrieved from "+ toBuck[i]);
-                putObject(s3, bucket, keyName + "-" + uuid.v4(), body)
+                putObject(s3, bucket, user, body,rek)
             });       
         }
     }else{
@@ -98,12 +91,9 @@ function putObjects(s3, bucket, keyName, toBuck, fromURL){
         for(var i in toBuck) {
             fs.readFile(toBuck[i], global.encoding(), function (err,data) { 
                 console.log("Reading file retrieved from "+ toBuck[i]);
-                putObject(s3, bucket, keyName + "-" + uuid.v4(), data)
+                putObject(s3, bucket, user, data,rek)
             });  
         }
     }
-}
-
-function userBucket(user){
-    return global.namespace()+'-'+user
+    return bucket;
 }

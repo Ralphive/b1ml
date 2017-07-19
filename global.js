@@ -20,5 +20,9 @@ module.exports = {
     
     encoding: function (){
                     return encoding;
+                },
+
+    userNs: function(user){
+                    return namespace+"-"+user;
                 }
 }

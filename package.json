@@ -14,7 +14,9 @@
   "author": "Ralph Oliveira - @Ralphive",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.17.2",
     "express": "^4.15.3",
-    "formidable": "^1.1.1"
+    "formidable": "^1.1.1",
+    "request": "^2.81.0"
   }
 }
