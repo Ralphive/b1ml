@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 // Load Node Modules
 var path = require('path');
 var fs = require('fs');
+var uuid = require('node-uuid');
+
 
 //Local Modules
 var bucket  = require('./bucket') 
@@ -91,8 +93,8 @@ app.post('/uploadURL', function(req, res){
     ml.createCollection(rek,req.body.user)
 
     //Store the images on the S3 Bucket, then add them to the collection
-    var bucket =  global.userNs(req.body.user)+"-"+uuid.v4();
-    bucket.create(s3, req.body.user, bucket, req.body.pics, rek)
+    var bucketName =  global.userNs(req.body.user)+"-"+uuid.v4();
+    bucket.create(s3, req.body.user, bucketName, req.body.pics, rek)
 
     res.send('All Good!');
 });
@@ -100,21 +102,23 @@ app.post('/uploadURL', function(req, res){
 // Identifies the user of a given image
 app.post('/searchFace', function(req, res){
   
+    var output = {} 
+
     //Store image on the defaulFacesBucket
     bucket.put(s3, global.faceBucket(),'xxx', req.body.pics[0],true,null, function(ret){
         
-        ml.searchFaces(rek,ret.Key, function(data){
-            console.dir(data)
+        ml.searchFaces(rek, global.faceBucket(), ret.Key, function(err, data){
+            
+            var extImgId =  '';
+            extImgId = data[0].Face.ExternalImageId;
+            output.user = extImgId.substring(0,extImgId.indexOf('-'));
+            res.send(output);
         })
         
-    });
     
+    });
     //Create a collection on Rekognition for the give user
     
-
-   
-
-    res.send('All Good!');
 });
 
 app.post('/initialize', function(req,res){

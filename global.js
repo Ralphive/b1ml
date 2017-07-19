@@ -3,6 +3,7 @@ var newImgDir = './uploads/new/'
 var awsImgDir = './uploads/aws/'
 var encoding = 'utf8'
 var faceBucket ='auth-faces'
+var faceMatch = 95 //%s Threshold
 
 
 module.exports = {
@@ -28,5 +29,8 @@ module.exports = {
                 },
     faceBucket: function(){
                     return namespace+ "-"+faceBucket;            
+                },
+    faceMatch: function(){
+                    return faceMatch;            
                 }
 }
