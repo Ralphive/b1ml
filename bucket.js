@@ -15,7 +15,7 @@ var user = '';
 module.exports = {
     //Creates a bucket and stores a file if its required
     //It also sned the files to a Rekognition Collection
-    create :function (s3, user, files, rek){                
+    create :function (s3, user, bucket, files, rek){                
                 
                 var toBuck= [];
                 var fromUrl = false;
@@ -25,7 +25,7 @@ module.exports = {
                     files = fs.readdirSync(global.newImgDir());
                     
                     for(var i in files) {
-                        if(files[i].indexOf(user)){
+                        if(files[i].indexOf(user)>=0){
                             toBuck.push(global.newImgDir()+files[i])
                         }
                     }
@@ -37,7 +37,6 @@ module.exports = {
                 }
 
                 //Bucket example b1ml-C99998-12dj91dj-192jd129dj1-2d1jd
-                var bucket =  global.userNs(user)+"-"+uuid.v4();
                 bucket = bucket.toLowerCase();
 
                 var params = {Bucket: bucket};
@@ -54,46 +53,63 @@ module.exports = {
         },
 
     //Puts file in a given bucket
-    put :   function (s3,bucket, user, Body){ 
-                putObject(s3, bucket, user, Body);
+    put :   function (s3, bucket, user, toBuck, fromURL,rek, callback){ 
+                putObjects(s3, bucket, user, toBuck, fromURL,rek, callback);
             }
 }
 
-function putObject(s3,bucket, user, body,rek){
-    //Upload an object to a given bucket 
-    //Add the object to a Rekognition collection
 
-    var params = {Bucket: bucket, Key: user+"-"+uuid.v4(), Body: body};
-    s3.putObject(params, function(err, data) {
-        if (err)
-            console.log(err)
-        else
-            console.log("Successfully uploaded data to " + bucket + "/" + user);
-            ml.indexFace(rek,user,bucket,params.Key )
-    });
+function putObjects(s3, bucket, user, toBuck, fromURL,rek,callback){
 
+
+    for(var i in toBuck) {   
+        getFileData(fromURL,toBuck[i],function(body){
+             putObject(s3, bucket, user, body,rek, function(data){
+                 if (callback){
+                     return callback(data);
+                 }
+             })
+        });
+    }
 }
 
-function putObjects(s3, bucket, user, toBuck, fromURL,rek){
-
-    console.log("Putting files to bucket '"+user+"'");
-
-    if (fromURL){
-        //Upload files from a given URL array
-        for(var i in toBuck) {       
-            request.get(toBuck[i], function (err, res, body) {
-                console.log("Content retrieved from "+ toBuck[i]);
-                putObject(s3, bucket, user, body,rek)
-            });       
-        }
+function getFileData(fromURL,path,callback){
+    if (fromURL){  
+        request.get(path, function (err, res, body) {
+            console.log("Content retrieved from "+ path);
+            return(callback(body));
+        })
     }else{
-        //Upload files from a given path array
-        for(var i in toBuck) {
-            fs.readFile(toBuck[i], global.encoding(), function (err,data) { 
-                console.log("Reading file retrieved from "+ toBuck[i]);
-                putObject(s3, bucket, user, data,rek)
-            });  
-        }
+        fs.readFile(toBuck[i], global.encoding(), function (err,data) { 
+            console.log("Reading file retrieved from "+ toBuck[i]);
+            return(callback(data));
+        });  
     }
-    return bucket;
+}
+
+function putObject(s3,bucket, user, body,rek,callback){
+    //Upload an object to a given S3 bucket 
+    //Add the object to a Rekognition collection if required
+    //Callback recommended for a single file only (to retrieve fileID)
+
+    var params = {Bucket: bucket, Key: user+"-"+uuid.v4(), Body: body};
+    
+    console.log("Putting file "+params.Key+" to bucket "+bucket);
+    
+    s3.putObject(params, function(err, data) {
+        if (err){ 
+            console.log(err)
+            return(callback(err))
+        }else{
+            console.log("Successfully uploaded files to " + bucket + "/" + params.Key);
+            if(rek){
+                ml.indexFace(rek,user,bucket,params.Key )
+            }
+            params.data = data;
+            
+            if(callback){
+                return(callback(params));
+            }
+        }     
+    });
 }

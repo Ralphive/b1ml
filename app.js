@@ -20,8 +20,9 @@ AWS.config.loadFromPath('./awsConfig.json');
 
 // Create an S3 client (for file management)
 var s3 =  new AWS.S3({apiVersion: '2006-03-01'});
-var rek = new AWS.Rekognition({apiVersion: '2016-06-27'})
 
+// Create an Rekognition client (Image classification)
+var rek = new AWS.Rekognition({apiVersion: '2016-06-27'})
 
 //Configure Express 
 var app = express();
@@ -44,12 +45,14 @@ app.post('/upload', function(req, res){
 
     // create an incoming form object
     var form = new formidable.IncomingForm();
-    // specify that we want to allow the user to upload multiple files in a single request
+    
+    // specify that we want to allow the user to 
+    //upload multiple files in a single request
     form.multiples = true;    
   
     // store all uploads in the /uploads directory
     form.uploadDir = path.join(__dirname, global.newImgDir());
-4
+
     // every time a file has been uploaded successfully,
     // rename it to it's orignal name
     form.on('file', function(field, file) {
@@ -88,14 +91,55 @@ app.post('/uploadURL', function(req, res){
     ml.createCollection(rek,req.body.user)
 
     //Store the images on the S3 Bucket, then add them to the collection
-    bucket.create(s3, req.body.user, req.body.pics, rek)
-    =
+    var bucket =  global.userNs(req.body.user)+"-"+uuid.v4();
+    bucket.create(s3, req.body.user, bucket, req.body.pics, rek)
 
     res.send('All Good!');
 });
 
+// Identifies the user of a given image
+app.post('/searchFace', function(req, res){
+  
+    //Store image on the defaulFacesBucket
+    bucket.put(s3, global.faceBucket(),'xxx', req.body.pics[0],true,null, function(ret){
+        
+        ml.searchFaces(rek,ret.Key, function(data){
+            console.dir(data)
+        })
+        
+    });
+    
+    //Create a collection on Rekognition for the give user
+    
+
+   
+
+    res.send('All Good!');
+});
+
+app.post('/initialize', function(req,res){
+    //Initialize all the system
+    
+    if (req.body.collections){
+        //Clean existing collections
+    }
+
+    if(req.body.buckets){
+        //clean existing buckets
+    }
+
+
+    //Creates Default Face Bucket
+     //Store the images on the S3 Bucket, then add them to the collection
+    bucket.create(s3, null, global.faceBucket(), null, null);
+});
+
+
+
+
 function callML(bucket, user){
-    console.log("Starting Rekognition for User: "+user+" on Bucket "+bucket);
+    console.log("Starting Rekognition for User: "+
+                                    user+" on Bucket "+bucket);                     
 }
 
 

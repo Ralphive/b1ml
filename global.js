@@ -2,6 +2,7 @@ var namespace = 'b1ml'
 var newImgDir = './uploads/new/'
 var awsImgDir = './uploads/aws/'
 var encoding = 'utf8'
+var faceBucket ='auth-faces'
 
 
 module.exports = {
@@ -24,5 +25,8 @@ module.exports = {
 
     userNs: function(user){
                     return namespace+"-"+user;
+                },
+    faceBucket: function(){
+                    return namespace+ "-"+faceBucket;            
                 }
 }
