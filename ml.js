@@ -2,8 +2,8 @@ var global = require('./global');
 
 module.exports = {
     //Create a face collection based on a bucket nae
-    createCollection :function (rek, keyName){                
-                return(createCollection(rek, keyName));
+    createCollection :function (rek, CollectionId){                
+                return(createCollection(rek, CollectionId));
             },
 
     indexFace :function (rek, user, bucket, image){                
@@ -14,15 +14,18 @@ module.exports = {
     //Add object from a bucket to a file
     searchFaces :   function (rek, bucket, key, callback){ 
                 return searchFaces(rek, bucket, key, callback);
-            }
+            },
+    deleteCollections: function(rek, callback){
+        return deleteCollections(rek, callback);
+    }
 }
 
 
 //Creates a  Rekognition Collection for a given user
-function createCollection(rek, user){
+function createCollection(rek, CollectionId){
 
     //Collection = Set of faces
-    var params = {CollectionId: global.userNs(user)};
+    var params = {CollectionId: CollectionId};
 
     rek.createCollection(params, function(err, data) {
         if (err){
@@ -36,9 +39,9 @@ function createCollection(rek, user){
     });
 }
 
-function indexFace(rek, user, bucket, image){
+function indexFace(rek, bucket, image){
     var params = {
-            CollectionId: global.userNs(user), 
+            CollectionId: global.faceCollection(), 
             DetectionAttributes: [], 
             ExternalImageId: image, 
             Image: {
@@ -49,54 +52,60 @@ function indexFace(rek, user, bucket, image){
             }
         }
     
-    console.log("Indexing face for user '"+user+"' from image "+ image)    
+    console.log("Indexing face for "+ image)    
     
     rek.indexFaces(params, function(err, data) {
         if (err) {
             console.error(err,err.stack);
         }
         else{
-            console.log("Face user '"+user+"' from image "+ image+" indexed successfully")    
-            console.log(data);           // successful response
+            console.log("Face for "+image+" indexed successfully")    
+            //console.log(data);           // successful response
         }   
     });
 }
 
-
 function searchFaces(rek, bucket, key, callback){
     
-    var params = {};
-    rek.listCollections(params, function(err, data) {
+    var params = {  CollectionId: global.faceCollection(), 
+                    FaceMatchThreshold: global.faceMatch(), 
+                    Image: {
+                        S3Object: {
+                            Bucket: bucket, 
+                            Name: key
+                        }
+                    }, 
+                    MaxFaces: 3
+                };
+    console.log("Searching for a face match");
+    rek.searchFacesByImage(params, function(err, data){
+        if (err){
+            console.log(err, err.stack); // an error occurred
+            callback(err, null);
+        }else{
+                console.log("Retrieving results for face match")
+                return callback(null, data)
+        }
+    });
+        
+ }
+
+ function deleteCollections(rek,callback){
+      rek.listCollections({}, function(err, data) {
         if (err){
             console.log(err, err.stack); // an error occurred
             callback(err, null);
         } 
         else{
             for(var i in data.CollectionIds) {
-                console.log("Checking image in collection "+data.CollectionIds[i])
-
-                params = {  CollectionId: data.CollectionIds[i], 
-                            FaceMatchThreshold: global.faceMatch(), 
-                            Image: {
-                                S3Object: {
-                                    Bucket: bucket, 
-                                    Name: key
-                                }
-                            }, 
-                            MaxFaces: 3
-                        };
-            
-                rek.searchFacesByImage(params, function(err, data){
-                    if (err){
-                        console.log(err, err.stack); // an error occurred
-                        //callback(err, null);
-                    }else{
-                        if (data.FaceMatches.length > 0){
-                            return callback(null, data.FaceMatches)
-                        }
-                    }
+                console.log("Deleting collection "+ data.CollectionIds[i])
+                rek.deleteCollection({CollectionId:data.CollectionIds[i]}, function(err, data) {
+                    if (err) console.log(err); // an error occurred
+                    else     console.log(data);           // successful response
                 });
-            }  
+            }
+            return callback(data);
         }
-    }); 
+    });
  }
+
