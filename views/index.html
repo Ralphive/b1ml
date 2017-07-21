@@ -37,15 +37,15 @@
             <h2 class="pi-draggable ">Train Me</h2>
           </div>
           <div class="row">
-            <form class="form-horizontal w-100">
-              <input placeholder="User Name" class="form-control" id="userName" type="text">
+            <form class="form-horizontal w-100" id=train>
+              <input placeholder="User Name" class="form-control" id="user" type="text">
               <input placeholder="Image URL" class="form-control" id="url1" type="url">
               <input id="url2" class="form-control" placeholder="Image URL" type="url">
               <input id="url3" class="form-control" placeholder="Image URL" type="url">
               <input id="url4" class="form-control" placeholder="Image URL" type="url">
               <input id="url5" class="form-control" placeholder="Image URL" type="url">
-              <input id="url5" class="form-control" placeholder="Image URL" type="url">
-              <button type="submit" class="btn btn-primary btn-lg btn-block" id="train">Train</button>
+              <input id="url6" class="form-control" placeholder="Image URL" type="url">
+              <button type="submit" class="btn btn-primary btn-lg btn-block">Train</button>
             </form>
           </div>
         </div>
@@ -64,15 +64,13 @@
             <h2 class="pi-draggable ">Test Me</h2>
           </div>
           <div class="row">
-            <form class="form-horizontal w-100">
+            <form class="form-horizontal w-100" id="test">
               <input id="testUrl" class="form-control" placeholder="Image URL" type="url">
               <button type="submit" class="btn btn-primary btn-lg btn-block" id="test">Test</button>
             </form>
           </div>
           <div class="row">
-              <div class="alert alert-success pi-draggable" id="resultAlert" role="alert" draggable="true">
-                <h4 class="alert-heading">Well done!</h4>
-                <p>Aww yeah, you successfully read this important alert message.</p>
+              <div class="alert alert-success pi-draggable collapse" id="resultAlert" role="alert" draggable="true">
               </div>
           </div>
         </div>

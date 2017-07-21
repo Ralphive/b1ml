@@ -47,13 +47,15 @@ function createBucket(s3, user, bucket, files, rek){
 function putObjects(s3, bucket, user, files,rek,callback){
 
     for(var i in files ) {   
-        getFileData(files[i].url,function(body){
+        if (files[i].url!=""){
+            getFileData(files[i].url,function(body){
              putObject(s3, bucket, user, body,rek, function(data){
                  if (callback){
                      return callback(data);
                  }
              })
         });
+        }
     }
 }
 

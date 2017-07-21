@@ -1,65 +1,93 @@
-$('.upload-btn').on('click', function (){
-    $('#upload-input').click();
-    $('.progress-bar').text('0%');
-    $('.progress-bar').width('0%');
-});
+var defultImage = 'https://pingendo.com/assets/photos/wireframe/photo-1.jpg';
+var body = {}
+$(document).ready(function(){  
 
-$('#upload-input').on('change', function(){
-
-  var files = $(this).get(0).files;
-
-  if (files.length > 0){
-    // create a FormData object which will be sent as the data payload in the
-    // AJAX request
-    var formData = new FormData();
-
-    // loop through all the selected files and add them to the formData object
-    for (var i = 0; i < files.length; i++) {
-      var file = files[i];
-
-      // add the files to formData object for the data payload
-      formData.append('uploads[]', file, file.name);
-    }
-
-    formData.append('UserName', 'C9998');
-
-    $.ajax({
-      url: '/upload',
-      type: 'POST',
-      data: formData,
-      processData: false,
-      contentType: false,
-      success: function(data){
-          console.log('upload successful!\n' + data);
-      },
-      xhr: function() {
-        // create an XMLHttpRequest
-        var xhr = new XMLHttpRequest();
-
-        // listen to the 'progress' event
-        xhr.upload.addEventListener('progress', function(evt) {
-
-          if (evt.lengthComputable) {
-            // calculate the percentage of upload completed
-            var percentComplete = evt.loaded / evt.total;
-            percentComplete = parseInt(percentComplete * 100);
-
-            // update the Bootstrap progress bar with the new percentage
-            $('.progress-bar').text(percentComplete + '%');
-            $('.progress-bar').width(percentComplete + '%');
-
-            // once the upload reaches 100%, set the progress bar text to done
-            if (percentComplete === 100) {
-              $('.progress-bar').html('Done');
-            }
-
-          }
-
-        }, false);
-
-        return xhr;
-      }
+  $(".form-horizontal").submit(function(){
+    var $inputs = $("#"+this.id+' :input');
+    var i = 0;
+    $inputs.each(function() {
+      if (this.id == "user")
+        body.user = $(this).val();
+      else
+        if  ($(this).val() != ""){
+          body.pics[i] = {url: $(this).val()};
+          i++;
+        }
+       
     });
 
-  }
+    if (this.id == "train")
+      trainSystem(body);
+    else
+      testSystem(body);
+
+    return false; //avoid refresh
+
+  });
+
+  $( "input[type='url']" ).change(function() {
+    if ($(this).val() == '')
+      changeImage(this.id, defultImage)
+    else
+      changeImage(this.id, $(this).val())
+  });
+
+  initialize();
+
 });
+
+function changeImage(id, url){
+  $("#img-"+id).attr("src",url);
+}
+
+function trainSystem(body){
+  postData("/trainSystem", body, function(data){
+    alert(JSON.stringify(data));
+  })
+
+
+}
+
+function testSystem(body){
+  postData("./searchFace", body, function(data){
+    var alert = 'success'
+    
+    if(data.user == undefined){
+      alert = 'danger'
+      $("#resultAlert").html('<h4 class="alert-heading">NOT MY CUSTOMER</h4>');
+    }else{
+      $("#resultAlert").html('<h4 class="alert-heading">Looks like '+data.user+
+                        '</h4><p>Similarity: '+data.Similarity+'%');
+    }
+    
+    $("#resultAlert").attr('class', 'alert alert-'+alert+' pi-draggable collapse');
+    $("#resultAlert").show();
+  })
+}
+
+function initialize(){
+  body = {
+    user: "",
+    pics: []}
+}
+
+function postData(endpoint, body, callback){
+   $.ajax({
+      url: endpoint,
+      type: 'POST',
+      data: JSON.stringify(body),
+      dataType : "json",
+      contentType: "application/json",
+      success: function(data){
+          return callback(data);
+      },
+      error: function( xhr, status, errorThrown ) {
+        alert (errorThrown);
+        console.log( "Error: " + errorThrown );
+        console.log( "Status: " + status );
+        console.dir( xhr );
+      },
+  });
+
+}
+
