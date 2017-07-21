@@ -1,39 +1,88 @@
-<!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="https://pingendo.github.io/templates/blank/theme.css" type="text/css"> </head>
 
-  <title>File Uploader - coligo.io</title>
-  <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-  <link href="css/styles.css" rel="stylesheet">
-</head>
 <body>
-
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <span class="glyphicon glyphicon-cloud-upload"></span>
-            <h2>File Uploader</h2>
-            <h4>coligo.io</h4>
-            <div class="progress">
-              <div class="progress-bar" role="progressbar"></div>
-            </div>
-            <button class="btn btn-lg upload-btn" type="button">Upload File</button>
+  <h1 class="display-1 text-center">Customer Finder
+    <br> </h1>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-6">
+              <img src="https://pingendo.com/assets/photos/wireframe/photo-1.jpg" draggable="true" id="img-url1" class="img-fluid d-block pi-draggable"> </div>
+            <div class="col-md-6">
+              <img id="img-url2" class="img-fluid d-block pi-draggable" src="https://pingendo.com/assets/photos/wireframe/photo-1.jpg" draggable="true"> </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <img id="img-url3" class="img-fluid d-block pi-draggable" src="https://pingendo.com/assets/photos/wireframe/photo-1.jpg" draggable="true"> </div>
+            <div class="col-md-6">
+              <img id="img-url4" class="img-fluid d-block pi-draggable" src="https://pingendo.com/assets/photos/wireframe/photo-1.jpg" draggable="true"> </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <img id="img-url5" class="img-fluid d-block pi-draggable" src="https://pingendo.com/assets/photos/wireframe/photo-1.jpg" draggable="true"> </div>
+            <div class="col-md-6">
+              <img id="img-url6" class="img-fluid d-block pi-draggable" src="https://pingendo.com/assets/photos/wireframe/photo-1.jpg" draggable="true"> </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row">
+            <h2 class="pi-draggable ">Train Me</h2>
+          </div>
+          <div class="row">
+            <form class="form-horizontal w-100">
+              <input placeholder="User Name" class="form-control" id="userName" type="text">
+              <input placeholder="Image URL" class="form-control" id="url1" type="url">
+              <input id="url2" class="form-control" placeholder="Image URL" type="url">
+              <input id="url3" class="form-control" placeholder="Image URL" type="url">
+              <input id="url4" class="form-control" placeholder="Image URL" type="url">
+              <input id="url5" class="form-control" placeholder="Image URL" type="url">
+              <input id="url5" class="form-control" placeholder="Image URL" type="url">
+              <button type="submit" class="btn btn-primary btn-lg btn-block" id="train">Train</button>
+            </form>
           </div>
         </div>
       </div>
     </div>
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-12">
+              <img id="img-testUrl" class="img-fluid d-block pi-draggable" src="https://pingendo.com/assets/photos/wireframe/photo-1.jpg" draggable="true"> </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row">
+            <h2 class="pi-draggable ">Test Me</h2>
+          </div>
+          <div class="row">
+            <form class="form-horizontal w-100">
+              <input id="testUrl" class="form-control" placeholder="Image URL" type="url">
+              <button type="submit" class="btn btn-primary btn-lg btn-block" id="test">Test</button>
+            </form>
+          </div>
+          <div class="row">
+              <div class="alert alert-success pi-draggable" id="resultAlert" role="alert" draggable="true">
+                <h4 class="alert-heading">Well done!</h4>
+                <p>Aww yeah, you successfully read this important alert message.</p>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+    <script src="https://pingendo.com/assets/bootstrap/bootstrap-4.0.0-alpha.6.min.js"></script>
+    <script src="javascripts/smartShop.js"></script>
   </div>
-
-  <input id="upload-input" type="file" name="uploads[]" multiple="multiple"></br>
-
-  <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-  <script src="javascripts/upload.js"></script>
 </body>
+
 </html>
