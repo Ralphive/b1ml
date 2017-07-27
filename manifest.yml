@@ -1,0 +1,5 @@
+---
+applications:
+- name: b1ml
+  memory: 64m
+  instances: 1

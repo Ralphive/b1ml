@@ -15,6 +15,8 @@ var global  = require('./global')
 var ml      = require('./ml');  
 
 
+var port = 8080
+
 //Initialization
 //Load Credentials and Region
 AWS.config.loadFromPath('./awsConfig.json');
@@ -103,6 +105,6 @@ app.post('/initialize', function(req,res){
 });
 
 
-var server = app.listen(3000, function(){
-  console.log('Server listening on port 3000');
+var server = app.listen(port, function(){
+  console.log('Server listening on port '+port);
 });
