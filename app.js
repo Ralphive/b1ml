@@ -13,6 +13,7 @@ var uuid = require('node-uuid');
 var bucket  = require('./bucket') 
 var global  = require('./global')
 var ml      = require('./ml');  
+var leo     = require('./leo');
 
 
 var port = 8080
@@ -31,12 +32,14 @@ var rek = new AWS.Rekognition({apiVersion: '2016-06-27'})
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-
 app.use(express.static(path.join(__dirname, 'public')));
 
 
+leo.updateVectorsBase();
 
+
+
+/** Endpoints */
 app.get('/', function(req, res){
   res.sendFile(path.join(__dirname, 'views/index.html'));
 });
