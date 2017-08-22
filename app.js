@@ -13,8 +13,12 @@ var uuid = require('node-uuid');
 var bucket  = require('./bucket') 
 var global  = require('./global')
 var ml      = require('./ml');  
+<<<<<<< HEAD
 var leo     = require('./leo');
 
+=======
+// add new module for SL
+>>>>>>> 9a461c359947e4a99eeae4cea96416ea02bea1a5
 
 var port = 8080
 
