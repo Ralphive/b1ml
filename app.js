@@ -13,7 +13,7 @@ var uuid = require('node-uuid');
 var bucket  = require('./bucket') 
 var global  = require('./global')
 var ml      = require('./ml');  
-// add new module for SL
+var sl      = require('./sl'); 
 
 var port = 8080
 
@@ -36,12 +36,61 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-
+// Main html page
 app.get('/', function(req, res){
   res.sendFile(path.join(__dirname, 'views/index.html'));
 });
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Service Layer Services
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// Login started by external apps or managed internally?
+app.get('/sl/Connect', function(req, res){
+    
+    sl.Connect(res);
+
+    console.log('Connect SL started');
+});
+
+// Get Similar Items
+// input = picture of an item
+app.post('/sl/GetSimilarItems', function(req, res){
+    
+    var picture = JSON.stringify(req.body);
+    sl.GetSimilarItems(picture, res);
+
+    console.log('GetSimilarItems');
+});
+
+// Create Draft Order
+app.post('/sl/CreateDraftOrder', function(req, res){
+    
+    var draft = JSON.stringify(req.body);
+    sl.CreateDraftOrder(draft, res);
+
+    console.log('CreateDraftOrder ');
+});
+
+// Get last Order Draft for a specific customer - bpCode as query string (if empty default value taken)
+app.get('/sl/GetDraftOrder', function(req, res){
+    var bpCode = req.query.bpCode;
+
+    sl.GetDraftOrder(bpCode, res);
+
+    console.log('Got bpCode from QUERY ' + bpCode);
+});
+
+// Create Order from a Draft DocEntry and Lines details
+app.post('/sl/CreateOrderFromDraft', function(req, res){
+    
+    var input = JSON.stringify(req.body);
+    sl.CreateOrderFromDraft(input, res);
+
+    console.log('CreateOrderFromDraft');
+});
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Called by FB Integration
 // Receives a Json with user + Pictures array
