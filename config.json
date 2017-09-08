@@ -22,7 +22,7 @@
         "Credentials" : {
             "APIKey": ""
         }
-    },
+    }, 
 
     "AWS": {
         "Credentials": {
