@@ -1,7 +1,7 @@
 {
     "ServiceLayer" :  { 
-        "Server": "34.231.149.54",
-        "Port" : "50001",
+        "Server": "",
+        "Port" : "50000",
         "Path" : "/b1s/v1/"
     },
 
@@ -20,14 +20,14 @@
 
     "Leonardo" : {
         "Credentials" : {
-            "APIKey": "vw0iWV2qC45ZVMlcpWRAbnMo2hZG6IOR"
+            "APIKey": ""
         }
     },
 
     "AWS": {
         "Credentials": {
-            "accessKeyId": "AKIAJI4VVNWU6W3KIM7A", 
-            "secretAccessKey": "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", 
+            "accessKeyId": "", 
+            "secretAccessKey": "", 
             "region": "eu-west-1"
         },
         
@@ -47,4 +47,4 @@
         "encoding" : "utf8",                               
         "serverPort": 8080 
     }
-}
+} 
