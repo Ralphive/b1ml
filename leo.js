@@ -5,11 +5,12 @@ var uuid = require('node-uuid');
 var fs = require('fs');
 
 //Load Local Modules
-global = require('./global')
+config = require('./config.json')
 
-console.log(global.imgDir());
+var __dirname = config.SmartShop.imgDir;
 
-var __dirname = global.imgDir();
+console.log(__dirname);
+
 
 module.exports = {
     updateVectorsBase :function (){                
@@ -72,7 +73,7 @@ function updateVectorsBase(){
     // finalize the archive (ie we are done appending files but streams have to finish yet) 
     archive.finalize();
 
-    
+
 
 
 
