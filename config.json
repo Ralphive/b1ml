@@ -1,6 +1,6 @@
 {
     "ServiceLayer" :  { 
-        "Server": "",
+        "Server": "SAMPLE",
         "Port" : "50000",
         "Path" : "/b1s/v1/"
     },
