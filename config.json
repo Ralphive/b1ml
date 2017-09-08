@@ -1,0 +1,49 @@
+{
+    "ServiceLayer" :  { 
+        "Server": "",
+        "Port" : "50001",
+        "Path" : "/b1s/v1/"
+    },
+
+    "B1" : {
+        "Credentials" : {
+            "UserName" : "manager",
+            "Password" : "1234",
+            "CompanyDB": "SBODEMOUS"
+        }, 
+        
+        "Defaults" : {
+            "BusinessPartner": "C20000"
+        }
+    }, 
+
+    "Leonardo" : {
+        "Credentials" : {
+            "APIKey": ""
+        }
+    },
+
+    "AWS": {
+        "Credentials": {
+            "accessKeyId": "", 
+            "secretAccessKey": "", 
+            "region": "eu-west-1"
+        },
+        
+        "S3":{
+            "faceBucket": "auth-faces"
+        },
+
+        "Rekognition":{
+            "faceCollection": "face-collection",
+            "matchThreshold": 80 
+        }
+    },
+
+    "SmartShop":{
+        "namespace":  "b1ml",
+        "imgDir": "./files/imgs/", 
+        "encoding" : "utf8",                               
+        "serverPort": 8080 
+    }
+}

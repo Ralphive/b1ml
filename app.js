@@ -23,10 +23,8 @@ var port = 8080
 //Load Credentials and Region
 AWS.config.loadFromPath('./awsConfig.json');
 
-// Create an S3 client (for file management)
+// Create an AWS clients (for file management)
 var s3 =  new AWS.S3({apiVersion: '2006-03-01'});
-
-// Create an Rekognition client (Image classification)
 var rek = new AWS.Rekognition({apiVersion: '2016-06-27'})
 
 //Configure Express 
@@ -137,7 +135,6 @@ app.post('/searchFace', function(req, res){
             console.log(output);
         })
     });
-    //Create a collection on Rekognition for the give user
 });
 
 app.post('/initialize', function(req,res){
