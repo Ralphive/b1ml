@@ -8,20 +8,16 @@ var path = require('path');
 var fs = require('fs');
 var uuid = require('node-uuid');
 
-
 //Local Modules
-var bucket  = require('./bucket') 
-var global  = require('./global')
+var bucket  = require('./bucket');
 var ml      = require('./ml');  
 var sl      = require('./sl'); 
 var leo     = require('./leo');
-
-
-var port = 8080
+var config  = require('./config.json');
 
 //Initialization
 //Load Credentials and Region
-AWS.config.loadFromPath('./awsConfig.json');
+AWS.config.update(config.AWS.Credentials);
 
 // Create an AWS clients (for file management)
 var s3 =  new AWS.S3({apiVersion: '2006-03-01'});
@@ -99,7 +95,7 @@ app.post('/sl/CreateOrderFromDraft', function(req, res){
 app.post('/trainSystem', function(req, res){
     
     //Store the images on the S3 Bucket, then add them to the collection
-    var bucketName =  global.userNs(req.body.user)+"-"+uuid.v4();
+    var bucketName =  config.SmartShop.namespace+"-"+req.body.user+"-"+uuid.v4();
     bucket.create(s3, req.body.user, bucketName, req.body.pics, rek)
 
     res.send({msg:'All Good!'});
@@ -113,15 +109,15 @@ app.post('/searchFace', function(req, res){
 
     //Store image on the defaulFacesBucket
     console.dir(req.body);
-    bucket.put(s3, global.faceBucket(),'xxx', req.body.pics,null, function(ret){
+    bucket.put(s3, config.AWS.S3.faceBucket,'xxx', req.body.pics,null, function(ret){
         
-        ml.searchFaces(rek, global.faceBucket(), ret.Key, function(err, data){
+        ml.searchFaces(rek, config.AWS.S3.faceBucket, ret.Key, function(err, data){
             if (err){
                 output = err;
                 res.send(output);
             }
 
-            if (data.FaceMatches.length > 0){
+            if (data && data.FaceMatches.length > 0){
                 data = data.FaceMatches;
                 var extImgId =  '';
                 extImgId = data[0].Face.ExternalImageId;
@@ -143,18 +139,18 @@ app.post('/initialize', function(req,res){
     if (req.body.collections){
         ml.deleteCollections(rek, function(data){
                 //Create a collection on Rekognition for the give user
-                ml.createCollection(rek,global.faceCollection())
+                ml.createCollection(rek,config.AWS.Rekognition.faceCollection)
         });
     }
 
     if(req.body.buckets){
       bucket.deleteBuckets(s3, function(){
-            bucket.create(s3, null, global.faceBucket(), null, null);
+            bucket.create(s3, null, config.AWS.S3.faceBucket, null, null);
       });
     }
 });
 
 
-var server = app.listen(port, function(){
-  console.log('Server listening on port '+port);
+var server = app.listen(config.SmartShop.serverPort, function(){
+  console.log('Server listening on port '+config.SmartShop.serverPort);
 });

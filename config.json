@@ -1,6 +1,6 @@
 {
     "ServiceLayer" :  { 
-        "Server": "",
+        "Server": "34.202.226.125",
         "Port" : "50001",
         "Path" : "/b1s/v1/"
     },
@@ -9,7 +9,8 @@
         "Credentials" : {
             "UserName" : "manager",
             "Password" : "1234",
-            "CompanyDB": "SBODEMOUS"
+            "CompanyDB": "SBODEMOUS",
+            "DefaultBP": "C20000"
         }, 
         
         "Defaults" : {
@@ -19,23 +20,23 @@
 
     "Leonardo" : {
         "Credentials" : {
-            "APIKey": ""
+            "APIKey": "vw0iWV2qC45ZVMlcpWRAbnMo2hZG6IOR"
         }
     },
 
     "AWS": {
         "Credentials": {
-            "accessKeyId": "", 
-            "secretAccessKey": "", 
+            "accessKeyId": "AKIAJI4VVNWU6W3KIM7A", 
+            "secretAccessKey": "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", 
             "region": "eu-west-1"
         },
         
         "S3":{
-            "faceBucket": "auth-faces"
+            "faceBucket": "b1ml-auth-faces"
         },
 
         "Rekognition":{
-            "faceCollection": "face-collection",
+            "faceCollection": "b1ml-face-collection",
             "matchThreshold": 80 
         }
     },
