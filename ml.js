@@ -1,4 +1,5 @@
-var global = require('./global');
+var config  = require('./config.json');
+
 
 module.exports = {
     //Create a face collection based on a bucket nae
@@ -41,7 +42,7 @@ function createCollection(rek, CollectionId){
 
 function indexFace(rek, bucket, image){
     var params = {
-            CollectionId: global.faceCollection(), 
+            CollectionId: config.AWS.Rekognition.faceCollection, 
             DetectionAttributes: [], 
             ExternalImageId: image, 
             Image: {
@@ -67,8 +68,8 @@ function indexFace(rek, bucket, image){
 
 function searchFaces(rek, bucket, key, callback){
     
-    var params = {  CollectionId: global.faceCollection(), 
-                    FaceMatchThreshold: global.faceMatch(), 
+    var params = {  CollectionId: config.AWS.Rekognition.faceCollection, 
+                    FaceMatchThreshold: config.AWS.Rekognition.matchThreshold, 
                     Image: {
                         S3Object: {
                             Bucket: bucket, 
