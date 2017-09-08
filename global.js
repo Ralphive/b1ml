@@ -1,10 +1,10 @@
-var namespace = 'b1ml'
-var newImgDir = './uploads/new/'
-var awsImgDir = './uploads/aws/'
-var encoding = 'utf8'
-var faceBucket ='auth-faces'
-var faceColl   = 'face-collection'
-var faceMatch = 80 //%s Threshold
+var namespace = 'b1ml'              //Namesspace for every artefact created
+var imgDir = './files/imgs/'        //Dir hosting images to be used for comparison
+var encoding = 'utf8'               //Default Enconding
+var faceBucket ='auth-faces'        //AWS S3 Bucket name
+var faceColl   = 'face-collection'  //AWS Rekognition Face Collection Name
+var faceMatch = 80                  //%s Threshold for face matching
+var serverPort = 8080               // NodeServer Port
 
 
 module.exports = {
@@ -13,12 +13,8 @@ module.exports = {
                     return namespace;
                 },
             
-    newImgDir:  function(){
-                    return newImgDir;
-                },
-    
-    awsImgDir: function(){
-                    return awsImgDir;
+    imgDir: function(){
+                    return imgDir;
                 },
     
     encoding: function (){
@@ -36,6 +32,9 @@ module.exports = {
                 },
     faceMatch: function(){
                     return faceMatch;            
+                },
+    serverPort: function(){
+                    return serverPort;
                 }
 }
 
