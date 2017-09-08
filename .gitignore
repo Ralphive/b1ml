@@ -1,3 +1,4 @@
 node_modules
 files/imgs/*
 awsConfig.json
+config.json

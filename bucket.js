@@ -4,11 +4,13 @@
 
 */
 var fs = require('fs')
-var global = require('./global')
 var ml = require('./ml')
 var uuid = require('node-uuid');
 var request = require('request').defaults({ encoding: null });
 var user = '';
+
+var config  = require('./config.json');
+
 
 
 module.exports = {
