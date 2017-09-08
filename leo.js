@@ -7,13 +7,13 @@ var fs = require('fs');
 //Load Local Modules
 global = require('./global')
 
-console.log(global.newImgDir());
+console.log(global.imgDir());
 
 var __dirname = global.imgDir();
 
 module.exports = {
     updateVectorsBase :function (){                
-                return extractImgs();
+                return updateVectorsBase();
         }
 }
 
@@ -63,11 +63,20 @@ function updateVectorsBase(){
             var file1 = __dirname + '/'+file;
             archive.append(fs.createReadStream(file1), { name: file });
             console.log(file);
+            
+            //TODO - Move image to a "Images alrady read"
+
         }
     })
     
     // finalize the archive (ie we are done appending files but streams have to finish yet) 
     archive.finalize();
+
+    
+
+
+
+
 
 }
 
