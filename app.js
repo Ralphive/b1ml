@@ -2,6 +2,7 @@
 var AWS = require('aws-sdk');
 var express = require('express');
 var bodyParser = require('body-parser');
+var formidable = require('formidable');
 
 // Load Node Modules
 var path = require('path');
@@ -30,7 +31,8 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-leo.updateVectorsBase();
+// Updates SAP Leonardo Vectors DB
+leo.UpdateVectorsBase();
 
 
 // Main html page
@@ -39,9 +41,7 @@ app.get('/', function(req, res){
   res.sendFile(path.join(__dirname, 'views/index.html'));
 });
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Service Layer Services
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Service Layer Services // 
 
 // Login started by external apps or managed internally?
 app.get('/sl/Connect', function(req, res){
@@ -88,9 +88,8 @@ app.post('/sl/CreateOrderFromDraft', function(req, res){
     console.log('CreateOrderFromDraft');
 });
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//Called by FB Integration
+// Face Recognition Services //
 // Receives a Json with user + Pictures array
 app.post('/trainSystem', function(req, res){
     
@@ -149,6 +148,20 @@ app.post('/initialize', function(req,res){
       });
     }
 });
+
+
+// SAP Leonardo Services // 
+app.post('/GetSimilarItems', function(req, res){                
+    
+    leo.GetSimilarItems(req, function(body){
+        res.send(body);    
+    });
+
+    console.log('GetSimilarItems')
+    
+});
+
+
 
 
 var server = app.listen(config.SmartShop.serverPort, function(){
