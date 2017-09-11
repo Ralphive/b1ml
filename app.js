@@ -28,7 +28,9 @@ var rek = new AWS.Rekognition({apiVersion: '2016-06-27'})
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
+
+app.use("/imgs", express.static(config.SmartShop.imgDir));
 
 
 // Updates SAP Leonardo Vectors DB
@@ -41,6 +43,10 @@ app.get('/', function(req, res){
   res.sendFile(path.join(__dirname, 'views/index.html'));
 });
 
+app.get(path.join(config.SmartShop.imgDir,':img'), function (req, res) {
+    res.sendFile(filepath);
+});
+
 // Service Layer Services // 
 
 // Login started by external apps or managed internally?
@@ -49,16 +55,6 @@ app.get('/sl/Connect', function(req, res){
     sl.Connect(res);
 
     console.log('Connect SL started');
-});
-
-// Get Similar Items
-// input = picture of an item
-app.post('/sl/GetSimilarItems', function(req, res){
-    
-    var picture = JSON.stringify(req.body);
-    sl.GetSimilarItems(picture, res);
-
-    console.log('GetSimilarItems');
 });
 
 // Create Draft Order

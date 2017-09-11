@@ -39,13 +39,13 @@ function UpdateVectorsBase(){
     var zipFile = uuid.v4()+'.zip';
 
     // create a file to stream archive data to. 
-    var output = fs.createWriteStream(__dirname + zipFile);
+    var output = fs.createWriteStream(config.SmartShop.imgDir + zipFile);
     var archive = archiver('zip', {zlib: { level: 9 }}); // Sets the compression level. 
 
     // listen for all archive data to be written 
     output.on('close', function() {
        
-        extractVectors(__dirname + zipFile, function (vectors){
+        extractVectors(config.SmartShop.imgDir + zipFile, function (vectors){
             //Creates a New Zip File with the vectors of each image
     
             vectors = JSON.parse(vectors);
@@ -56,7 +56,7 @@ function UpdateVectorsBase(){
             }
     
             //zipFile = config.Leonardo.VectorZip;
-            output = fs.createWriteStream(__dirname + zipFile);
+            output = fs.createWriteStream(config.SmartShop.imgDir + zipFile);
 
             for(var i = 0; i < vectors.feature_vector_list.length; i++ ){  
                 //Change file extension 
@@ -153,7 +153,7 @@ function GetSimilarItems(req, callback){
                                     resp.similarityScoring = resp.similarityScoring[i].similarVectors
                                     for (var j =0; j < resp.similarityScoring.length; j++){
                                         var fileName = resp.similarityScoring[j].id
-                                        fileName = path.join(config.SmartShop.imgDir, fileName.substr(0, fileName.indexOf('.'))+'.jpg')
+                                        fileName = fileName.substr(0, fileName.indexOf('.'))+'.jpg'
                                         resp.similarityScoring[j].id = fileName 
                                     }
 
