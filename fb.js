@@ -1,14 +1,8 @@
-//Module to retrieve user's profile picture (profile album) given User's Access Token
-
-const express = require('express');
-const app = express();
-const PORT = process.env.PORT || 3000;
+// Module to retrieve user's profile picture (profile album) 
+// given the User's Access Token
 
 var FB = require('fb'); // Load Facebook module
-// var ouserName;          // Store the facebook user name to send together with the pictures in JSON
 var oaccessToken;       // User's Access Token retrieved from mobile app's call
-var jObject = {};       // Send this JSON to train the ML system
-var photoIDs = [];      // Array to store IDs for all photos
 
 module.exports = {
     Connect: function (response) {
@@ -19,11 +13,14 @@ module.exports = {
     },
 }
 
-function getPhotoURLBatch(photoID){
-    // This function returns array of Picture URLs
-    // given the Picture IDs (array of photoID) in batch mode
+function getPhotoURLBatch(photoID, callback){
+// This function returns array of Picture URLs
+// given the Picture IDs (array of photoID) in batch mode
+    
+    var jObject = {};       // Send this JSON to train the ML system
     var eachElement;
     var data;
+    var resBatch;
     var oCompleteCall = {};
     oCompleteCall.batch = [];
 
@@ -35,33 +32,37 @@ function getPhotoURLBatch(photoID){
         oCompleteCall.batch.push(oMethodAndURL);
     }
     
+    jObject.pics = [];
+
     FB.api('/', 'POST', {
     batch: JSON.stringify(oCompleteCall.batch),
     include_headers: false,
     access_token: oaccessToken
-    }, function (response) {
-        for(var i = 0; i < response.length ; i++){            
-            eachElement = response[i];
+    }, function (resBatch) {
+        for(var i = 0; i < resBatch.length ; i++){            
+            eachElement = resBatch[i];
             for (var property in eachElement) {
                 if (eachElement.hasOwnProperty(property)) {
                     data = eachElement[property];
                 }
             }
             eachElement = JSON.parse(data);
-            //Builds JSON object
+            //Build the JSON object
             //Get the source element which is the URL
             //Clean URL to avoid special char at the begining and at the end of the string
             var urlObj = {url: JSON.stringify(eachElement.source).replace(/['"]+/g, '')};
             jObject.pics.push(urlObj);
-            // jObject.user = userName;
+            if (i == resBatch.length-1){
+                callback(jObject);
+            }
         }
     });
 }
 
-function formatPictureObject(result){
-    // Function to format pictures URL
-    var json;
-    jObject.pics = [];
+function formatPictureObject(result, callback){
+// Function to format pictures URL
+    var photoIDs = []; // Array to store IDs for all photos
+    var json;
     
     for(var i = 0; i < result.data.length ; i++){
         json = result.data[i];
@@ -70,16 +71,13 @@ function formatPictureObject(result){
         photoIDs.push(photoID);
     }
     
-    getPhotoURLBatch(photoIDs);
+    getPhotoURLBatch(photoIDs, callback);
 }
 
-
-
-function GetUserProfilePictures(accessToken, res){
-    // ouserName = userName;
+function GetUserProfilePictures(accessToken, callback){
     oaccessToken = accessToken;
     var profilePicsAlbumID;
-
+    
     FB.api( "/me/albums", {access_token: oaccessToken},
         function (response) {
           if (response && !response.error) {
@@ -91,7 +89,7 @@ function GetUserProfilePictures(accessToken, res){
                         {access_token: oaccessToken},
                         function (response) {
                           if (response && !response.error) {
-                            formatPictureObject(response);
+                            formatPictureObject(response, callback);
                           }
                         }
                     );
