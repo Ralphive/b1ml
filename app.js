@@ -49,6 +49,7 @@ app.get(path.join(config.SmartShop.imgDir,':img'), function (req, res) {
 });
 
 // Facebook Services //
+
 //Facebook picture retriever
 app.post('/fb/trainLeoWithUserPics', function(req, res){
     //Call function to retrieve the profile array of pictures

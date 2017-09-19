@@ -1,5 +1,5 @@
-// Module to retrieve user's profile picture (profile album) 
-// given the User's Access Token
+// Module to retrieve user's profile picture, living in 
+// the user's profile album, given the User's Access Token
 
 var FB = require('fb'); // Load Facebook module
 var oaccessToken;       // User's Access Token retrieved from mobile app's call
