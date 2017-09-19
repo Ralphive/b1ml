@@ -14,6 +14,7 @@ var bucket  = require('./bucket');
 var ml      = require('./ml');  
 var sl      = require('./sl'); 
 var leo     = require('./leo');
+var fb     = require('./fb');
 var config  = require('./config.json');
 
 //Initialization
@@ -46,6 +47,19 @@ app.get('/', function(req, res){
 app.get(path.join(config.SmartShop.imgDir,':img'), function (req, res) {
     res.sendFile(filepath);
 });
+
+// Facebook Services //
+
+//Facebook picture retriever
+app.post('/fb/trainLeoWithUserPics', function(req, res){
+    //Call function to retrieve the profile array of pictures
+    fb.GetUserProfilePictures(req.body.accessToken, function(fbData){
+        var bucketName =  config.SmartShop.namespace+"-"+req.body.user+"-"+uuid.v4();
+        bucket.create(s3, req.body.user, bucketName, fbData.pics, rek);
+        res.send("All good");
+        });
+});
+
 
 // Service Layer Services // 
 
@@ -163,3 +177,4 @@ app.post('/GetSimilarItems', function(req, res){
 var server = app.listen(config.SmartShop.serverPort, function(){
   console.log('Server listening on port '+config.SmartShop.serverPort);
 });
+
